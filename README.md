@@ -8,26 +8,30 @@ CCGX.
 ## Background
 
 Support for tank monitoring in Venus OS is fundamentally broken.
-Inexplicably, Victron's low-level code ignores CAN/N2K tank instance
-numbers, substituting them with the sensor device's own instance
-number.
-Since the Victron strategy is to associate each tank sensor with a
-dbus service, the consequence is that data from multiple tanks appears
-in Venus as a single dbus service.
-In the absence of any tank instance numbers, disaggregation of the
-composite data is at best problematic and for non-trivial tank
-installations infeasible.
+The low-level code implementing CAN/N2K tank data recovery assumes
+one tank sensor device per physical tank and generates a dbus
+tank service besed on this assumption.
+
+For multi-channel tank sensor devices Venus discards individual
+tank sensor instance numbers and consolidates data from all tank
+sensors under the tank device instance number, leading to a single
+dbus tank service delivering data from multiple tanks.
+
+The absence of any tank sensor instance numbers means that
+disaggregation of the composite data is at best problematic and, for
+non-trivial tank installations, infeasible.
 
 Even so, there have been a number of attempts at implementing fixes
-and work-arounds in Venus, mostly relying on the spurious association
-of fluid type and tank level which allows the disaggregation of the
-composite data if one allows no more than one tank of any fluid type.
+and work-arounds in Venus.
+Mostly these rely on the spurious association of fluid type and tank
+level which only allows the disaggregation of the composite data if
+one allows no more than one tank of any fluid type.
 kwindrem's
 ("repeater")[https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS]
 project follows this approach by:
 
-1. disaggregating the garbled data and creating one dbus service for
-   each identified tank, and
+1. disaggregating the garbled data and creating a dbus service for
+   each unique fluid type, and
 2. tweaking the Venus GUI so that data from the new dbus services is
    displayed nicely and data from the garbled, original, service is
    ignored.
@@ -36,9 +40,10 @@ project follows this approach by:
 
 __venus-signalk-tank-service__ borrows kwindrem's GUI modifications,
 ignores Venus' broken tank handling and instead recovers tank data
-from a Signal K server, generates one dbus service per tank and in
-so doing makes it available to Venus in a way that can be picked up
-and rendered on a CCGX or similar display.
+from a Signal K server, generating and updating one dbus service per
+tank.
+Once tha data is on dbus it becomes available to Venus in a way that
+can be picked up and rendered on a CCGX or similar display.
 
 Data is recovered from Signal K over HTTP and the Signal K server can
 be running on the local network or even on the Venus host.
@@ -55,7 +60,7 @@ kwindrem's GUI tweaks.
    at the above link.
    
    When you run the repeater project setup script, respond to the
-   first prompts with 'a' (Activate) and subsequent prompts with 'y'.
+   first prompt with 'a' (Activate) and subsequent prompts with 'y'.
    This will activate kwindrem's repeater (we don't need this) and
    install his GUI changes (we do need these).
    
@@ -87,25 +92,16 @@ $> cd venus-signalk-tank-service
    INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_4
    ```
    If the output isn't what you expect, then check the tank data
-   available in Signal K and make sure that the values you supplied
-   for SIGNALK_SERVER and SIGNALK_TANKS are correct.
+   is actually available in Signal K and make sure that the values
+   you supplied for SIGNALK_SERVER and SIGNALK_TANKS are correct.
 
 6. With ```signalktankservice.py``` running you should see your
    configured tanks displaying on the Venus GUI.
 
 7. Run ```setup``` to make ```signalktankservice.py``` execute
    automatically when Venus boots.
-
-
-
-to the
-   two questions relating to GUI changes.
-
-2. 
-
-#
-# The code here uses the GUI enhancements implemented by kwindrem in
-# the project mentioned above.
-#
-# 1. Install the GUI enhancements from kwindrem's project.
-# 2. Copy this program into  
+   ```
+   $> ./setup
+   ```
+   Note that you will need to run ```setup``` again after a Venus OS update
+   on a CCGX or other similar device.
