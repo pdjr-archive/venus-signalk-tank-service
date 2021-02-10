@@ -27,7 +27,7 @@ Mostly these rely on the spurious association of fluid type and tank
 level which only allows the disaggregation of the composite data if
 one allows no more than one tank of any fluid type.
 kwindrem's
-[TankRepeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
+[tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
 project follows this approach by:
 
 1. disaggregating the garbled data and creating a dbus service for
