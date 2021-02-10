@@ -39,7 +39,7 @@ project follows this approach by:
 ## This project
 
 __venus-signalk-tank-service__ borrows kwindrem's GUI modifications,
-ignores Venus' broken tank handling and instead recovers tank data
+ignores Venus' broken tank handling, and instead recovers tank data
 from a Signal K server, generating and updating one dbus service per
 tank.
 Once tha data is on dbus it becomes available to Venus in a way that
