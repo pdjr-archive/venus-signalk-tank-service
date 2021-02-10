@@ -61,12 +61,12 @@ SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'live
 SIGNALK_TANK_PATH_TO_SERVICE = {}
 
 class SystemBus(dbus.bus.BusConnection):
-		def __new__(cls):
-				return dbus.bus.BusConnection.__new__(cls, dbus.bus.BusConnection.TYPE_SYSTEM)
+	def __new__(cls):
+		return dbus.bus.BusConnection.__new__(cls, dbus.bus.BusConnection.TYPE_SYSTEM)
 
 class SessionBus(dbus.bus.BusConnection):
-		def __new__(cls):
-				return dbus.bus.BusConnection.__new__(cls, dbus.bus.BusConnection.TYPE_SESSION)
+	def __new__(cls):
+		return dbus.bus.BusConnection.__new__(cls, dbus.bus.BusConnection.TYPE_SESSION)
 
 def dbusconnection():
 	return SessionBus() if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else SystemBus()
@@ -131,7 +131,7 @@ def main():
 	DBusGMainLoop(set_as_default=True)
 
 	# If no Signal K tanks are configured, then auto-configure by
-	# recover all available tank paths from the server.
+	# recovering all available tank paths from the server.
 	if not SIGNALK_TANKS:
 		http = httplib.HTTPConnection(SIGNALK_SERVER)
 		http.request('GET', SIGNALK_SELF_PATH + '/tanks/')
@@ -174,7 +174,7 @@ def main():
 				SIGNALK_TANK_PATH_TO_SERVICE[SIGNALK_SELF_PATH + '/' + tank['path'] + '/currentLevel/value'] = service
 			http.close()
 
-		# And finally arrange to update tank date every so often.
+		# And finally arrange to update tank data every so often.
 		gobject.timeout_add(UPDATE_INTERVAL, updateTanks)
 
 	mainloop = gobject.MainLoop()
