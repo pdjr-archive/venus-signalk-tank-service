@@ -44,8 +44,8 @@ __venus-signalk-tank-service__ borrows kwindrem's GUI modifications,
 ignores Venus' broken tank handling, and instead recovers tank data
 from a Signal K server, generating and updating one dbus service per
 tank.
-Once tha data is on dbus it becomes available to Venus in a way that
-can be picked up and rendered on a CCGX or similar display.
+Once the data is on dbus it becomes available to Venus in a way that
+can be picked up and rendered by a CCGX or similar display.
 
 Data is recovered from Signal K over HTTP and the Signal K server can
 be running on the local network or even on the Venus host.
