@@ -71,19 +71,39 @@ kwindrem's GUI tweaks.
    
 3. Install __venus-signalk-tank-service__ by logging into your Venus
    device and issuing the following commands.
-```
-$> cd /data
-$> wget wget https://github.com/preeve9534/venus-signalk-tank-service/archive/main.zip
-$> unzip main.zip
-$> rm main.zip
-$> cd venus-signalk-tank-service
-```
+   ```
+   $> cd /data
+   $> wget wget https://github.com/preeve9534/venus-signalk-tank-service/archive/main.zip
+   $> unzip main.zip
+   $> rm main.zip
+   $> cd venus-signalk-tank-service
+   ```
 
-4. Open signalktankservice.py in a text editor and change the value
-   of SIGNALK_SERVER and SIGNALK_TANKS to suit your needs.
+4. Open ```signalktankservice.py``` in a text editor and change the
+   values of SIGNALK_SERVER and SIGNALK_TANKS to suit your needs.
 
-5. Run signalktankservice.py and check that it outputs details of the
-   tanks it is configuring. My system has five tanks and I see:
+   SIGNALK_SERVER should specify the hostname/IP address and port
+   number of your Signal K server.
+   Use ```SIGNALK_SERVER = '127.0.0.1:3000'``` if Signal K is
+   running on its defaultt port on the Venus host.
+   
+   If you set ```SIGNALK_TANKS = []``` then all the tanks available
+   on SIGNALK_HOST will be automatically recovered.
+   Alternatively, you can specify particular tanks via their 'self'
+   relative Signal K path.
+   For example:
+   ```
+   SIGNALK_TANKS = [
+        { 'path': 'tanks/wasteWater/0' },
+        { 'path': 'tanks/freshWater/1' },
+        { 'path': 'tanks/freshWater/2' },
+        { 'path': 'tanks/fuel/3' },
+        { 'path': 'tanks/fuel/4' }
+   ]
+   ```
+
+5. Run ```signalktankservice.py``` and check that it outputs details of
+   the tanks it is configuring. My system has five tanks and I see:
    ```
    $> ./signalktankservice.py 
    INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_0
@@ -98,6 +118,7 @@ $> cd venus-signalk-tank-service
 
 6. With ```signalktankservice.py``` running you should see your
    configured tanks displaying on the Venus GUI.
+   Stop the program using 'ctrl-C'.
 
 7. Run ```setup``` to make ```signalktankservice.py``` execute
    automatically when Venus boots.
