@@ -75,6 +75,7 @@ kwindrem's GUI tweaks.
 $> cd /data
 $> wget wget https://github.com/preeve9534/venus-signalk-tank-service/archive/main.zip
 $> unzip main.zip
+$> rm main.zip
 $> cd venus-signalk-tank-service
 ```
 
