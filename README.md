@@ -127,6 +127,11 @@ be running on the local network or even on the Venus host.
    This script simply adds a line to ```/data/rc.local``` (creating the file if it
    is absent) which launches ```signalktankservice.py``` when Venus reboots.
    This change persists over OS updates.
+   
+8. Finally, reboot Venus.
+   ```
+   $> reboot
+   ```
 
 ## Acknowledgements
 
