@@ -3,5 +3,9 @@
 if [ -f /data/rc.local ] ; then
     grep -v "signalktankservice.py" /data/rc.local > temp
     mv -f temp /data/rc.local
+else
+    echo "#!/bin/bash" > /data/rc.local
 fi
+
 echo "/data/venus-signalk-tank-service-main/signalktankservice.py &" >> /data/rc.local
+chmod 755 /data/rc.local
