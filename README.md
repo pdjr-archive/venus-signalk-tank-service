@@ -50,9 +50,6 @@ can be picked up and rendered on a CCGX or similar display.
 Data is recovered from Signal K over HTTP and the Signal K server can
 be running on the local network or even on the Venus host.
 
-Pretty rendering of the tank data on a CCGX or whatever depends upon
-kwindrem's GUI tweaks.
-
 ### Installation
 
 1. If you are installing on a CCGX, make sure that root access is
@@ -78,7 +75,7 @@ kwindrem's GUI tweaks.
    $> wget wget https://github.com/preeve9534/venus-signalk-tank-service/archive/main.zip
    $> unzip main.zip
    $> rm main.zip
-   $> cd venus-signalk-tank-service
+   $> cd venus-signalk-tank-service-main
    ```
 
 4. Open ```signalktankservice.py``` in a text editor and change the
@@ -127,15 +124,16 @@ kwindrem's GUI tweaks.
    ```
    $> ./setup
    ```
-   Note that you will need to run ```setup``` again after a Venus OS update
-   on a CCGX or other similar device.
+   This script simply adds a line to ```/data/rc.local``` (creating the file if it
+   is absent) which launches ```signalktankservice.py``` when Venus reboots.
+   This change persists over OS updates.
 
 ## Acknowledgements
 
-Thanks to kwindrem for making this a whole lot easier than it might have
+Thanks to @kwindrem for making this a whole lot easier than it might have
 been by designing his repeater software in a way which meant I could
 leverage it.
 
-Thanks to Vicron for finally saying 'don't expect [multi-channel] tank
-support anytime soon' and so motivating me to take a different approach to
-getting tank data on my CCGX.
+Thanks to @mvader at Victron for being honest about the likelihood of a
+manufacturer fix and and so motivating me (after four years of complaining!)
+to take a different approach to getting tank data on my CCGX.
