@@ -127,3 +127,13 @@ kwindrem's GUI tweaks.
    ```
    Note that you will need to run ```setup``` again after a Venus OS update
    on a CCGX or other similar device.
+
+## Acnowledgements
+
+Thanks to kwindrem for making this a whole lot easier than it might have
+been by designing his repeater software in a way which meant I could
+leverage it.
+
+Thanks to Vicron for finally saying 'don't expect [multi-channel] tank
+support anytime soon' and motivating me to take a different approach to
+getting tank data on my CCGX.
