@@ -5,6 +5,8 @@ tank data derived from multi-channel tank sensors like the Maretron
 FPM100 and the Garnet SeeLevel on a Venus OS device like the Victron
 CCGX.
 
+![CCGX tank display](venus.png)
+
 ## Background
 
 Support for tank monitoring in Venus OS is fundamentally broken.

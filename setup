@@ -1,0 +1,4 @@
+#!/bin/bash
+
+grep -v "signalktankservice.py" /data/rc.local > temp && mv -f temp /data/rc.local
+echo "/data/venus-signalk-tank-service-main/signalktankservice.py &" >> /data/rc.local
