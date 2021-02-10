@@ -72,9 +72,9 @@ be running on the local network or even on the Venus host.
    device and issuing the following commands.
    ```
    $> cd /data
-   $> wget wget https://github.com/preeve9534/venus-signalk-tank-service/archive/main.zip
-   $> unzip main.zip
-   $> rm main.zip
+   $> wget wget https://github.com/preeve9534/venus-signalk-tank-service/archive/main.tar.gz
+   $> tar -xzf main.tar.gz
+   $> rm main.tar.gz
    $> cd venus-signalk-tank-service-main
    ```
 
