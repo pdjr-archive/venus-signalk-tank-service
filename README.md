@@ -1,9 +1,10 @@
 # venus-signalk-tank-service
 
 __venus-signalk-tank-service__ implements a solution for displaying
-tank data derived from multi-channel tank sensors like the Maretron
-FPM100 and the Garnet SeeLevel on a Venus OS device like the Victron
-CCGX.
+Signal K tank data on Venus OS devices like the Victron CCGX.
+This may be useful because Venus OS cannot correctly process tank
+data that derives from multi-channel tank sensor devices like the
+Maretron FPM100 and the Garnet SeeLevel. 
 Although designed to address Venus' multi-channel sensor problem, the
 project will, of course, inject any Signal K tank data into Venus
 and so make it renderable on a Venus display.
