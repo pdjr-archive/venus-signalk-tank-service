@@ -160,7 +160,7 @@ def main():
 				jsondata = json.loads(res.read())
 				fluidType = SIGNALK_TO_N2K_FLUID_TYPES[fluidtype]
 				capacity = jsondata['capacity']['value']
-				serviceName = 'com.victronenergy.tank.signalk_tank_' + instance
+				serviceName = 'com.victronenergy.tank.signalk_tank_' + fluidType + '_' + instance
 				service = SignalkTank(
 					servicename=serviceName,
 					deviceinstance=int(instance),
