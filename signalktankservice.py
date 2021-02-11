@@ -27,6 +27,7 @@ import json
 
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), './ext/velib_python'))
 from vedbus import VeDbusService
+from settingsdevice import SettingsDevice
 
 ########################################################################
 # START OF USER CONFIGURATION
@@ -56,6 +57,7 @@ UPDATE_INTERVAL = 10000
 # END OF USER CONFIGURATION
 ########################################################################
 
+VERSION="1.0"
 SIGNALK_SELF_PATH='/signalk/v1/api/vessels/self'
 SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'liveWell': 3, 'Oil': 4, 'wasteWater': 5 }
 SIGNALK_TANK_PATH_TO_SERVICE = {}
@@ -76,16 +78,29 @@ def dbusconnection():
 # venus.os tank monitoring implementation. 
 
 class SignalkTank:
-	def __init__(self, servicename, paths, deviceinstance, productname='Signal K tank', connection='Signal K tank service'):
+	def __init__(self, n2kfluidtype, n2ktankinstance, paths, productname='Signal K tank', connection='Signal K tank service'):
 		self._dbus = dbusconnection();
-		self._dbusservice = VeDbusService(servicename, self._dbus)
+		self._servicename = 'com.victronenergy.tank.signalk_tank_' + str(n2kfluidtype) + '_' + str(n2ktankinstance)
 		self._paths = paths
 
+                # Get a unique service instance from Settings
+                inst_f1 str(paths['/FluidType']['initial'])
+                inst_f2 str(deviceinstance)
+                path = '/Settings/Devices/SignalkTank/%s/%s' % (inst_f1, inst_f2) 
+                logging.info(path);
+		def_inst = '%s:%s' % (inst_f1, inst_f2)
+		SETTINGS = {
+			'instance':   [path + '/ClassAndVrmInstance', def_inst, 0, 0],
+			'customname': [path + '/CustomName', '', 0, 0],
+		}
+                self._settings = SettingsDevice(self._dbus, SETTINGS, self._handlesettingchanged)
+
+		self._dbusservice = VeDbusService(self._servicename, self._dbus)
 		self._dbusservice.add_path('/Mgmt/ProcessName', __file__)
-		self._dbusservice.add_path('/Mgmt/ProcessVersion', 'Unkown version, and running on Python ' + platform.python_version())
+		self._dbusservice.add_path('/Mgmt/ProcessVersion', VERSION + ' on Python ' + platform.python_version())
 		self._dbusservice.add_path('/Mgmt/Connection', 'SignalK' + str(deviceinstance))
 
-		self._dbusservice.add_path('/DeviceInstance', deviceinstance)
+		self._dbusservice.add_path('/DeviceInstance', self._settings['instance'].split(':')[1])
 		self._dbusservice.add_path('/ProductId', 0)
 		self._dbusservice.add_path('/ProductName', 'SignalK tank interface')
 		self._dbusservice.add_path('/FirmwareVersion', 0)
@@ -162,8 +177,8 @@ def main():
 				capacity = jsondata['capacity']['value']
 				serviceName = 'com.victronenergy.tank.signalk_tank_' + fluidType + '_' + instance
 				service = SignalkTank(
-					servicename=serviceName,
-					deviceinstance=int(instance),
+					n2kfluidtype=fluidType,
+                                        n2kitankinstance=int(instance),
 					paths={
 						'/Level': { 'initial': 0 },
 						'/FluidType': { 'initial': fluidType },
