@@ -84,21 +84,18 @@ class SignalkTank:
 		self._paths = paths
 
                 # Get a unique service instance from Settings
-                inst_f1 str(paths['/FluidType']['initial'])
-                inst_f2 str(deviceinstance)
-                path = '/Settings/Devices/SignalkTank/%s/%s' % (inst_f1, inst_f2) 
-                logging.info(path);
-		def_inst = '%s:%s' % (inst_f1, inst_f2)
+                path = '/Settings/Devices/SignalkTank/%s/%s' % (n2kfluidtype, n2ktankinstance) 
+		def_inst = '%s:%s' % ('tank', n2ktankinstance)
 		SETTINGS = {
 			'instance':   [path + '/ClassAndVrmInstance', def_inst, 0, 0],
 			'customname': [path + '/CustomName', '', 0, 0],
 		}
-                self._settings = SettingsDevice(self._dbus, SETTINGS, self._handlesettingchanged)
+                self._settings = SettingsDevice(self._dbus, SETTINGS, self._handlesettingschanged)
 
 		self._dbusservice = VeDbusService(self._servicename, self._dbus)
 		self._dbusservice.add_path('/Mgmt/ProcessName', __file__)
 		self._dbusservice.add_path('/Mgmt/ProcessVersion', VERSION + ' on Python ' + platform.python_version())
-		self._dbusservice.add_path('/Mgmt/Connection', 'SignalK' + str(deviceinstance))
+		self._dbusservice.add_path('/Mgmt/Connection', 'SignalK ' + def_inst)
 
 		self._dbusservice.add_path('/DeviceInstance', self._settings['instance'].split(':')[1])
 		self._dbusservice.add_path('/ProductId', 0)
@@ -110,9 +107,13 @@ class SignalkTank:
 		for path, settings in self._paths.iteritems():
 			self._dbusservice.add_path(path, settings['initial'], writeable=True, onchangecallback=self._handlechangedvalue)
 
+	def _handlesettingschanged(self, name, old, new):
+		return
+	
+
 	def _update(self, currentLevel):
-	  self._dbusservice['/Level'] = (currentLevel * 100)
-	  self._dbusservice['/Remaining'] = (self._dbusservice['/Capacity'] * currentLevel)
+		self._dbusservice['/Level'] = (currentLevel * 100)
+		self._dbusservice['/Remaining'] = (self._dbusservice['/Capacity'] * currentLevel)
 
 	def _handlechangedvalue(self, path, value):
 		logging.debug("someone else updated %s to %s" % (path, value))
@@ -175,10 +176,9 @@ def main():
 				jsondata = json.loads(res.read())
 				fluidType = SIGNALK_TO_N2K_FLUID_TYPES[fluidtype]
 				capacity = jsondata['capacity']['value']
-				serviceName = 'com.victronenergy.tank.signalk_tank_' + fluidType + '_' + instance
 				service = SignalkTank(
 					n2kfluidtype=fluidType,
-                                        n2kitankinstance=int(instance),
+                                        n2ktankinstance=int(instance),
 					paths={
 						'/Level': { 'initial': 0 },
 						'/FluidType': { 'initial': fluidType },
