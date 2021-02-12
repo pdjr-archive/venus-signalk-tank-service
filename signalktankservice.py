@@ -83,14 +83,14 @@ class SignalkTank:
 		self._servicename = 'com.victronenergy.tank.signalk_tank_' + str(n2kfluidtype) + '_' + str(n2ktankinstance)
 		self._paths = paths
 
-                # Get a unique service instance from Settings
-                path = '/Settings/Devices/SignalkTank/%s/%s' % (n2kfluidtype, n2ktankinstance) 
+    # Get a unique service instance from Settings
+    path = '/Settings/Devices/SignalkTank/%s/%s' % (n2kfluidtype, n2ktankinstance) 
 		def_inst = '%s:%s' % ('tank', n2ktankinstance)
 		SETTINGS = {
 			'instance':   [path + '/ClassAndVrmInstance', def_inst, 0, 0],
 			'customname': [path + '/CustomName', '', 0, 0],
 		}
-                self._settings = SettingsDevice(self._dbus, SETTINGS, self._handlesettingschanged)
+    self._settings = SettingsDevice(self._dbus, SETTINGS, self._handlesettingschanged)
 
 		self._dbusservice = VeDbusService(self._servicename, self._dbus)
 		self._dbusservice.add_path('/Mgmt/ProcessName', __file__)
@@ -178,7 +178,7 @@ def main():
 				capacity = jsondata['capacity']['value']
 				service = SignalkTank(
 					n2kfluidtype=fluidType,
-                                        n2ktankinstance=int(instance),
+          n2ktankinstance=int(instance),
 					paths={
 						'/Level': { 'initial': 0 },
 						'/FluidType': { 'initial': fluidType },
