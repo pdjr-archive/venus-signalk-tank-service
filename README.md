@@ -35,35 +35,33 @@ and work-arounds in Venus.
 Mostly these rely on the spurious association of fluid type and tank
 level which only allows the disaggregation of the composite data if
 one allows no more than one tank of any fluid type.
-kwindrem's
-[tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
-project follows this approach by:
-
-1. disaggregating the garbled data and creating a dbus service for
-   each unique fluid type, and
-2. tweaking the Venus GUI so that data from the new dbus services is
-   displayed nicely and data from the garbled, original, service is
-   ignored.
 
 ## This project
 
-__venus-signalk-tank-service__ borrows kwindrem's GUI modifications,
-ignores Venus' broken tank handling, and instead recovers tank data
-from a Signal K server, generating and updating one dbus service per
-tank.
+__venus-signalk-tank-service__ ignores Venus' broken tank handling,
+and instead recovers tank data from a Signal K server, generating
+and updating one dbus service per tank.
 Once the data is on dbus it becomes available to Venus in a way that
 can be picked up and rendered by a CCGX or similar display.
 
 Data is recovered from Signal K over HTTP and the Signal K server can
 be running on the local network or even on the Venus host.
 
+For many multi-tank installations the default Venus GUI doesn't quite
+make it - the size of individual tank panel elements limits the number
+of tanks that can be displayed.
+@kwindrem has impemented some GUI updates that address this problem
+in his
+[tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
+project and the following installation instructions assume that you
+will want to update your system in this way.
+
 ### Installation
 
 1. If you are installing on a CCGX, make sure that root access is
    enabled.
    
-2. Install kwindrem's repeater project by following his instructions
-   at the above link.
+2. Install kwindrem's [tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS).
    
    When you run the repeater project setup script, respond to the
    first prompt with 'a' (Activate) and subsequent prompts with 'y'.
