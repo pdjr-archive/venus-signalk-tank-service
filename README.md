@@ -140,7 +140,7 @@ will want to update your system in this way.
 
 ## Acknowledgements
 
-Thanks to @kwindrem for making this a whole lot easier than it might have
+Thanks to @kwendrem for making this a whole lot easier than it might have
 been by designing his repeater software in a way which meant I could
 leverage it.
 
