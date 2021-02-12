@@ -61,16 +61,17 @@ will want to update your system in this way.
 1. If you are installing on a CCGX, make sure that root access is
    enabled.
    
-2. Install kwindrem's [tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS).
+2. Install @kwindrem's
+   [tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS).
    
    When you run the repeater project setup script, respond to the
    first prompt with 'a' (Activate) and subsequent prompts with 'y'.
-   This will activate kwindrem's repeater (we don't need this) and
+   This will activate @kwindrem's repeater (we don't need this) and
    install his GUI changes (we do need these).
    
    Run the repeater project setup script again, responding to the
    first prompt with 'd' (Disable) and subsequent prompts with 'y'.
-   This will disable kwindrem's repeater, but leave his GUI changes
+   This will disable @kwindrem's repeater, but leave his GUI changes
    in place.
    
 3. Install __venus-signalk-tank-service__ by logging into your Venus
@@ -140,10 +141,14 @@ will want to update your system in this way.
 
 ## Acknowledgements
 
-Thanks to @kwendrem for making this a whole lot easier than it might have
+Thanks to @kwindrem for making this a whole lot easier than it might have
 been by designing his repeater software in a way which meant I could
 leverage it.
 
 Thanks to @mvader at Victron for being honest about the likelihood of a
 manufacturer fix and and so motivating me (after four years of complaining!)
 to take a different approach to getting tank data on my CCGX.
+
+## Author
+
+Paul Reeve \<<preeve@pdjr.eu>\>
