@@ -49,6 +49,8 @@ SIGNALK_TANKS = [
 	{ 'path': 'tanks/fuel/4' }
 ]
 
+HIDE_PRODUCT_ID = 41312
+
 # The frequency in ms at which to update tank data.
 
 UPDATE_INTERVAL = 10000
@@ -61,6 +63,8 @@ VERSION="1.0"
 SIGNALK_SELF_PATH='/signalk/v1/api/vessels/self'
 SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'liveWell': 3, 'Oil': 4, 'wasteWater': 5 }
 SIGNALK_TANK_PATH_TO_SERVICE = {}
+SETTINGS_ROOT = '/Settings/Devices'
+APPLICATION_SERVICE_NAME = 'signalktank'
 
 class SystemBus(dbus.bus.BusConnection):
 	def __new__(cls):
@@ -80,23 +84,25 @@ def dbusconnection():
 class SignalkTank:
 	def __init__(self, n2kfluidtype, n2ktankinstance, paths, productname='Signal K tank', connection='Signal K tank service'):
 		self._dbus = dbusconnection();
-                self._servicename = 'signalktank_%s_%s_%s' % (SIGNALK_SERVER.replace('.','_').replace(':','_'), str(n2kfluidtype), str(n2ktankinstance))
+                self._servicename = '%s_%s_%s_%s' % (APPLICATION_SERVICE_NAME, SIGNALK_SERVER.replace('.','_').replace(':','_'), str(n2kfluidtype), str(n2ktankinstance))
 		self._dbusservicename = 'com.victronenergy.tank.%s' % self._servicename
 		self._paths = paths
 
-                # Get a unique service instance from Settings
-                path = '/Settings/Devices/%s' % self._servicename
-		def_inst = '%s:%s' % ('tank', n2ktankinstance)
+                # Process settings and recover our VRM instance number
+		appsettingspath = '%s/%s' % (SETTINGS_ROOT, APPLICATION_SERVICE_NAME)
+                servicesettingspath = '%s/%s' % (SETTINGS_ROOT, self._servicename)
+		proposedclassdeviceinstance = '%s:%s' % ('tank', n2ktankinstance)
 		SETTINGS = {
-			'instance':   [path + '/ClassAndVrmInstance', def_inst, 0, 0],
-			'customname': [path + '/CustomName', 'Signal K Tank ' + str(n2ktankinstance), 0, 0],
+                        'ignore':     [appsettingspath + '/HideProductId', HIDE_PRODUCT_ID, 0, 0], 
+			'instance':   [servicesettingspath + '/ClassAndVrmInstance', proposedclassdeviceinstance, 0, 0],
+			'customname': [servicesettingspath + '/CustomName', '', 0, 0]
 		}
                 self._settings = SettingsDevice(self._dbus, SETTINGS, self._handlesettingschanged)
 
 		self._dbusservice = VeDbusService(self._dbusservicename, self._dbus)
 		self._dbusservice.add_path('/Mgmt/ProcessName', __file__)
 		self._dbusservice.add_path('/Mgmt/ProcessVersion', VERSION + ' on Python ' + platform.python_version())
-		self._dbusservice.add_path('/Mgmt/Connection', 'SignalK ' + def_inst)
+		self._dbusservice.add_path('/Mgmt/Connection', 'SignalK ' + self._settings['instance'])
 
 		self._dbusservice.add_path('/DeviceInstance', self._settings['instance'].split(':')[1])
 		self._dbusservice.add_path('/ProductId', 0)
