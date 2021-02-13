@@ -8,9 +8,9 @@ This is useful because it provides a work-around for Venus' broken
 native support for multi-channel tank sensor devices like the
 Maretron FPM100 and the Garnet SeeLevel. 
 
-Although designed to address Venus' multi-channel support issue, the
-project will, of course, inject any Signal K tank data into Venus
-and so make it renderable on a Venus display.
+Although designed to address Venus' problem with multi-channel tank
+sensors, the project will, of course, inject any Signal K tank data
+into Venus and so make it available to a Venus display.
 
 ![CCGX tank display](venus.png)
 
@@ -40,9 +40,10 @@ one allows no more than one tank of any fluid type.
 
 __venus-signalk-tank-service__ ignores Venus' broken tank handling,
 and instead recovers tank data from a Signal K server, generating
-and updating one dbus service per tank.
-Once the data is on dbus it becomes available to Venus in a way that
-can be picked up and rendered by a CCGX or similar display.
+and updating one D-Bus service per tank.
+Once the data is on the host sytem D-Bus it becomes available to
+Venus in a way that can be picked up and rendered by a CCGX or
+similar display.
 
 Data is recovered from Signal K over HTTP and the Signal K server can
 be running on the local network or even on the Venus host.
