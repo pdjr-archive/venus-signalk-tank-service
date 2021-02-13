@@ -156,9 +156,9 @@ will want to update your system in this way.
    ```
    $> ./setup
    ```
-   This script simply adds a line to ```/data/rc.local``` (creating the file if it
-   is absent) which launches ```signalktankservice.py``` when Venus reboots.
-   This change persists over OS updates.
+   This script adds a line to ```/data/rc.local``` (creating the file if it
+   is absent).
+   The change persists over OS updates.
    
 8. Finally, reboot Venus.
    ```
