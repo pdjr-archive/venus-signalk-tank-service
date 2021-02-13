@@ -33,38 +33,45 @@ from settingsdevice import SettingsDevice
 # START OF USER CONFIGURATION
 ########################################################################
 
-# Change this value to specify your Signal K server.
-
+# The Signal K server to poll for tank data.
+#
 SIGNALK_SERVER = '192.168.1.2:3000'
 
-# Specify an empty array and all tank paths on the Signal K server
-# will be automatically acquired. Otherwise, specify the tanks you
-# want to handle like this.
-
+# The tanks to be processed (specify an empty array to process all
+# tanks on SIGNALK_SERVER.
+#
 SIGNALK_TANKS = [
-	{ 'path': 'tanks/wasteWater/0' },
+	{ 'path': 'tanks/wasteWater/0', 'factor': 1000.0 },
 	{ 'path': 'tanks/freshWater/1' },
 	{ 'path': 'tanks/freshWater/2' },
 	{ 'path': 'tanks/fuel/3' },
 	{ 'path': 'tanks/fuel/4' }
 ]
 
+# The /ProductId of any multi-channel tank service which should be
+# hidden on the GUI and the persistent settings path to which this
+# should be written so that the GUI can find it.
+# 
 HIDE_PRODUCT_ID = 41312
 
 # The frequency in ms at which to update tank data.
-
+#
 UPDATE_INTERVAL = 10000
 
 ########################################################################
 # END OF USER CONFIGURATION
 ########################################################################
 
-VERSION="1.0"
+APPLICATION_SERVICE_NAME = 'signalktank'
+VERSION='1.0.2'
+
 SIGNALK_SELF_PATH='/signalk/v1/api/vessels/self'
 SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'liveWell': 3, 'Oil': 4, 'wasteWater': 5 }
 SIGNALK_TANK_PATH_TO_SERVICE = {}
 SETTINGS_ROOT = '/Settings/Devices'
-APPLICATION_SERVICE_NAME = 'signalktank'
+
+HIDE_SETTINGS_PATH = '/Settings/Devices/TankRepeater/SeeLevelService'
+HIDE_SETTINGS_VALUE = HIDE_PRODUCT_ID
 
 class SystemBus(dbus.bus.BusConnection):
 	def __new__(cls):
@@ -93,7 +100,7 @@ class SignalkTank:
                 servicesettingspath = '%s/%s' % (SETTINGS_ROOT, self._servicename)
 		proposedclassdeviceinstance = '%s:%s' % ('tank', n2ktankinstance)
 		SETTINGS = {
-                        'ignore':     [appsettingspath + '/HideProductId', HIDE_PRODUCT_ID, 0, 0], 
+                        'ignore':     [HIDE_SETTINGS_PATH, HIDE_SETTINGS_VALUE, 0, 0], 
 			'instance':   [servicesettingspath + '/ClassAndVrmInstance', proposedclassdeviceinstance, 0, 0],
 			'customname': [servicesettingspath + '/CustomName', '', 0, 0]
 		}

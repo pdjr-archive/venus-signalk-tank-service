@@ -1,13 +1,5 @@
 #!/bin/bash
 
-GUIFILE="/opt/victronenergy/gui/qml/OverviewMobile.qml"
-KWINDREMS_SETTING="/Settings/Devices/TankRepeater/SeeLevelService"
-OUR_SETTING="/Settings/Devices/signalktank/HideProductId"
-
-
-# Modify @kwindrem's GUIFILE to use our persistent setting.
-sed -i "s!${KWINDREMS_SETTING}!${OUR_SETTING}!g" $GUIFILE
-
 # Add our program to rc.local
 if [ -f /data/rc.local ] ; then
     grep -v "signalktank.py" /data/rc.local > temp
