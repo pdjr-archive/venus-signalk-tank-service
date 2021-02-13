@@ -168,7 +168,7 @@ will want to update your system in this way.
 ## Acknowledgements
 
 Thanks to @kwindrem for making this a whole lot easier than it might have
-been by designing his repeater software in a way which meant I could
+been by designing his repeater software in a way which meant others could
 leverage it.
 
 Thanks to @mvader at Victron for being honest about the likelihood of a
