@@ -86,15 +86,18 @@ will want to update your system in this way.
    ```
 
 4. Open ```tankservice.py``` in a text editor and change the
-   values of SIGNALK_SERVER and SIGNALK_TANKS to suit your needs.
+   values of SIGNALK_SERVER and maybe SIGNALK_TANKS and
+   HIDE_PRODUCT_ID to suit your needs.
 
-   SIGNALK_SERVER should specify the hostname/IP address and port
+   SIGNALK_SERVER specifies the hostname/IP-address and port
    number of your Signal K server.
    Use ```SIGNALK_SERVER = '127.0.0.1:3000'``` if Signal K is
-   running on its defaultt port on the Venus host.
+   running on its default port on the Venus host.
    
-   If you set ```SIGNALK_TANKS = []``` then all the tanks available
-   on SIGNALK_HOST will be automatically recovered.
+   SIGNALK_TANKS specifies which tanks on SIGNALK_HOST should
+   be maintained as Venus services.
+   Setting ```SIGNALK_TANKS = []``` will cause all the tanks
+   available on SIGNALK_HOST will be automatically processed.
    
    If you want to process just some tanks or you want to adjust the
    value Signal K returns for tank capacity, then you can specify the
@@ -116,6 +119,15 @@ will want to update your system in this way.
    This latter correction can be useful if a tank sensor has been
    configured in a way that does not return tank capacity in the litres
    required by Venus.
+   
+   HIDE_PRODUCT_ID allows you to remove any faulty multi-channel tank
+   sensor from the Venus GUI.
+   To do this you need to specify the /ProductId reported by the faulty
+   service created by Venus OS - you can use dbus-spy(1) to recover this.
+   The default value of 41312 corresponds to the value reported by a
+   Garnet SeeLevel, but the /ProductId returned by other manufacturer's
+   devices will, inevitably, be different and you may have to set this
+   value appropriately.
 
 5. Run ```tankservice.py``` and check that it outputs details of the tanks
    it is configuring. My system has five tanks and I see:
@@ -133,10 +145,14 @@ will want to update your system in this way.
 
 6. With ```tankservice.py``` running you should see your configured tanks
    displaying on the Venus GUI.
+   Note that if you have a faulty multi-channel tank sensor on your
+   CAN/N2K bus then it will also show up at this point, but it should
+   disappear at the next step!
    Stop the program using 'ctrl-C'.
 
 7. Run ```setup``` to make ```tankservice.py``` execute automatically when
-   Venus boots.
+   Venus boots and to tweak @kwindrem's GUI files so that acknowledge our
+   HIDE_PRODUCT_ID setting.
    ```
    $> ./setup
    ```
