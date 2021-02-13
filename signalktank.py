@@ -169,26 +169,28 @@ def main():
 	# that can be processed by the CCGX interface. 
 	if SIGNALK_TANKS:
 		for tank in SIGNALK_TANKS:
-			[ dummy, fluidtype, instance ] = tank['path'].split('/')
-			http = httplib.HTTPConnection(SIGNALK_SERVER)
-			http.request('GET', SIGNALK_SELF_PATH + '/' + tank['path'])
-			res = http.getresponse()
-			if res.status == 200:
-				jsondata = json.loads(res.read())
-				fluidType = SIGNALK_TO_N2K_FLUID_TYPES[fluidtype]
-				capacity = jsondata['capacity']['value']
-				service = SignalkTank(
-					n2kfluidtype=fluidType,
-                                        n2ktankinstance=int(instance),
-					paths={
-						'/Level': { 'initial': 0 },
-						'/FluidType': { 'initial': fluidType },
-						'/Capacity': { 'initial': capacity },
-						'/Remaining': { 'initial': 0 }
-					}
-				)
-				SIGNALK_TANK_PATH_TO_SERVICE[SIGNALK_SELF_PATH + '/' + tank['path'] + '/currentLevel/value'] = service
-			http.close()
+			if tank.hasKey('path'):
+				[ dummy, fluidtype, instance ] = tank['path'].split('/')
+				factor = tank.hasKey('factor')?tank['factor']:1.0
+				http = httplib.HTTPConnection(SIGNALK_SERVER)
+				http.request('GET', SIGNALK_SELF_PATH + '/' + tank['path'])
+				res = http.getresponse()
+				if res.status == 200:
+					jsondata = json.loads(res.read())
+					fluidType = SIGNALK_TO_N2K_FLUID_TYPES[fluidtype]
+					capacity = (jsondata['capacity']['value'] * factor)
+					service = SignalkTank(
+						n2kfluidtype=fluidType,
+                                        	n2ktankinstance=int(instance),
+						paths={
+							'/Level': { 'initial': 0 },
+							'/FluidType': { 'initial': fluidType },
+							'/Capacity': { 'initial': capacity },
+							'/Remaining': { 'initial': 0 }
+						}
+					)
+					SIGNALK_TANK_PATH_TO_SERVICE[SIGNALK_SELF_PATH + '/' + tank['path'] + '/currentLevel/value'] = service
+				http.close()
 
 		# And finally arrange to update tank data every so often.
 		gobject.timeout_add(UPDATE_INTERVAL, updateTanks)
