@@ -84,7 +84,7 @@ will want to update your system in this way.
    $> cd venus-signalk-tank-service-main
    ```
 
-4. Open ```signalktankservice.py``` in a text editor and change the
+4. Open ```tankservice.py``` in a text editor and change the
    values of SIGNALK_SERVER and SIGNALK_TANKS to suit your needs.
 
    SIGNALK_SERVER should specify the hostname/IP address and port
@@ -94,39 +94,48 @@ will want to update your system in this way.
    
    If you set ```SIGNALK_TANKS = []``` then all the tanks available
    on SIGNALK_HOST will be automatically recovered.
-   Alternatively, you can specify particular tanks via their 'self'
-   relative Signal K path.
-   For example:
+   
+   If you want to process just some tanks or you want to adjust the
+   value Signal K returns for tank capacity, then you can specify the
+   tanks you want to process. For example:
    ```
    SIGNALK_TANKS = [
-        { 'path': 'tanks/wasteWater/0' },
+        { 'path': 'tanks/wasteWater/0', 'factor': 1000.0 },
         { 'path': 'tanks/freshWater/1' },
         { 'path': 'tanks/freshWater/2' },
         { 'path': 'tanks/fuel/3' },
         { 'path': 'tanks/fuel/4' }
    ]
    ```
+   
+   Use the *path* string property to specify the self-relative Signal K
+   path of a tank to be processed and, optionally, specify a decimal
+   *factor* property which will be applied as a multiplier to the capacity
+   value returned by Signal K.
+   This latter correction can be useful if a tank sensor has been
+   configured in a way that does not return tank capacity in the litres
+   required by Venus.
 
-5. Run ```signalktankservice.py``` and check that it outputs details of
-   the tanks it is configuring. My system has five tanks and I see:
+5. Run ```tankservice.py``` and check that it outputs details of the tanks
+   it is configuring. My system has five tanks and I see:
    ```
    $> ./signalktankservice.py 
-   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_0
-   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_1
-   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_2
-   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_3
-   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_tank_4
+   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalktank_192_168_1_2_3000_5_0
+   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalktank_192_168_1_2_3000_1_1
+   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalktank_192_168_1_2_3000_1_2
+   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalktank_192_168_1_2_3000_0_3
+   INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalktank_192_168_1_2_3000_0_4
    ```
    If the output isn't what you expect, then check the tank data
    is actually available in Signal K and make sure that the values
    you supplied for SIGNALK_SERVER and SIGNALK_TANKS are correct.
 
-6. With ```signalktankservice.py``` running you should see your
-   configured tanks displaying on the Venus GUI.
+6. With ```tankservice.py``` running you should see your configured tanks
+   displaying on the Venus GUI.
    Stop the program using 'ctrl-C'.
 
-7. Run ```setup``` to make ```signalktankservice.py``` execute
-   automatically when Venus boots.
+7. Run ```setup``` to make ```tankservice.py``` execute automatically when
+   Venus boots.
    ```
    $> ./setup
    ```
