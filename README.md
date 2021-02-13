@@ -94,13 +94,13 @@ will want to update your system in this way.
    Use ```SIGNALK_SERVER = '127.0.0.1:3000'``` if Signal K is
    running on its default port on the Venus host.
    
-   SIGNALK_TANKS specifies which tanks on SIGNALK_HOST should
+   SIGNALK_TANKS specifies which tanks on SIGNALK_SERVER should
    be maintained as Venus services.
    Setting ```SIGNALK_TANKS = []``` will cause all the tanks
-   available on SIGNALK_HOST will be automatically processed.
+   available on SIGNALK_SERVER to be automatically processed.
    
    If you want to process just some tanks or you want to adjust the
-   value Signal K returns for tank capacity, then you can specify the
+   value Signal K returns for tank capacity, then you must specify the
    tanks you want to process. For example:
    ```
    SIGNALK_TANKS = [
