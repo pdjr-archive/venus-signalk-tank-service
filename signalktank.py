@@ -169,9 +169,9 @@ def main():
 	# that can be processed by the CCGX interface. 
 	if SIGNALK_TANKS:
 		for tank in SIGNALK_TANKS:
-			if tank.hasKey('path'):
+			if ('path' in tank):
 				[ dummy, fluidtype, instance ] = tank['path'].split('/')
-				factor = tank.hasKey('factor')?tank['factor']:1.0
+				factor = tank['factor'] if ('factor' in tank) else 1.0
 				http = httplib.HTTPConnection(SIGNALK_SERVER)
 				http.request('GET', SIGNALK_SELF_PATH + '/' + tank['path'])
 				res = http.getresponse()
