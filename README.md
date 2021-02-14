@@ -1,16 +1,16 @@
 # venus-signalk-tank-service
 
-__venus-signalk-tank-service__ provides a mechanism for injecting
-tank data from Signal K onto the Venus OS dbus, enabling the display
-of such data on Venus OS devices like the Victron CCGX.
+__venus-signalk-tank-service__ represents Signal K tanks as D-Bus
+services, injecting tank data from Signal K onto the Venus OS dbus
+and enabling its display on the Venus GUI.
 
 This is useful because it provides a work-around for Venus' broken
-native support for multi-channel tank sensor devices like the
-Maretron FPM100 and the Garnet SeeLevel. 
+native support for multi-channel CAN/N2K tank sensor devices like
+the Maretron FPM100 and the Garnet SeeLevel. 
 
 Although designed to address Venus' problem with multi-channel tank
 sensors, the project will, of course, inject any Signal K tank data
-into Venus and so make it available to a Venus display.
+into Venus and so make it available to devices like the CCGX.
 
 ![CCGX tank display](venus.png)
 
@@ -18,32 +18,33 @@ into Venus and so make it available to a Venus display.
 
 Support for tank monitoring in Venus OS is fundamentally broken.
 The low-level code implementing CAN/N2K tank data recovery assumes
-one tank sensor device per physical tank and generates a dbus
-tank service besed on this assumption.
+one tank sensor device per physical tank and generates a D-Bus
+tank service for each sensor device based on this false
+understanding.
 
-For multi-channel tank sensor devices Venus discards individual
-tank sensor instance numbers and consolidates data from all tank
-sensors under the tank device instance number, leading to a single
-dbus tank service delivering data from multiple tanks.
+A tank service in Venus that represesents a multi-channel tank sensor
+device is chaotically updated with data from all the sensors connected
+to the device with the consequence that GUI rendering of data from the
+service is unintelligible.
 
-The absence of any tank sensor instance numbers means that
-disaggregation of the composite data is at best problematic and, for
-non-trivial tank installations, infeasible.
+Somewhere in this broken-ness Venus discards tank sensor instance
+numbers making disaggregation of the garbled composite data at best
+problematic and, for non-trivial tank installations, infeasible.
 
 Even so, there have been a number of attempts at implementing fixes
-and work-arounds in Venus.
-Mostly these rely on the spurious association of fluid type and tank
-level which only allows the disaggregation of the composite data if
-one allows no more than one tank of any fluid type.
+and work-arounds in Venus based on the association of fluid type and
+tank level: an assumption which holds only if an installation has a
+single tank of each fluid type.
 
 ## This project
 
 __venus-signalk-tank-service__ ignores Venus' broken tank handling,
 and instead recovers tank data from a Signal K server, generating
 and updating one D-Bus service per tank.
-Once the data is on the host sytem D-Bus it becomes available to
-Venus in a way that can be picked up and rendered by a CCGX or
-similar display.
+
+For systems which have a CAN/N2K connection receiving data from a
+multi-channel tank sensor device a facility is provided which hides
+display of the associated (broken) D-Bus service.
 
 Data is recovered from Signal K over HTTP and the Signal K server can
 be running on the local network or even on the Venus host.
