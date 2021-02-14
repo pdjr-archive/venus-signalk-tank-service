@@ -1,12 +1,12 @@
 # venus-signalk-tank-service
 
 __venus-signalk-tank-service__ represents Signal K tanks as D-Bus
-services, injecting tank data from Signal K onto the Venus OS dbus
-and enabling its display on the Venus GUI.
+services, injecting tank data from Signal K into Venus OS and 
+enabling its display on the Venus GUI.
 
 This is useful because it provides a work-around for Venus' broken
 native support for multi-channel CAN/N2K tank sensor devices like
-the Maretron FPM100 and the Garnet SeeLevel. 
+the Maretron FPM100 and the Garnet SeeLevel.
 
 Although designed to address Venus' problem with multi-channel tank
 sensors, the project will, of course, inject any Signal K tank data
@@ -19,13 +19,12 @@ into Venus and so make it available to devices like the CCGX.
 Support for tank monitoring in Venus OS is fundamentally broken.
 The low-level code implementing CAN/N2K tank data recovery assumes
 one tank sensor device per physical tank and generates a D-Bus
-tank service for each sensor device based on this false
-understanding.
+tank service for each sensor device based on this false understanding.
 
-A tank service in Venus that represesents a multi-channel tank sensor
-device is chaotically updated with data from all the sensors connected
-to the device with the consequence that GUI rendering of data from the
-service is unintelligible.
+Consequently, a tank service in Venus that represesents a multi-channel
+tank sensor device is chaotically updated with data from all the tank
+sensors that are connected to the multi-channel device resulting in a
+GUI rendering of the data that is unintelligible.
 
 Somewhere in this broken-ness Venus discards tank sensor instance
 numbers making disaggregation of the garbled composite data at best
@@ -36,6 +35,12 @@ and work-arounds in Venus based on the association of fluid type and
 tank level: an assumption which holds only if an installation has a
 single tank of each fluid type.
 
+If you have a multi-channel tank sensor on CAN/N2K and you have only
+one tank of each fluid type, then look at @kwindrem's
+[tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
+project for a display fix that does not involve Signal K.
+Otherwise, read on...
+
 ## This project
 
 __venus-signalk-tank-service__ ignores Venus' broken tank handling,
@@ -44,19 +49,20 @@ and updating one D-Bus service per tank.
 
 For systems which have a CAN/N2K connection receiving data from a
 multi-channel tank sensor device a facility is provided which hides
-display of the associated (broken) D-Bus service.
+display of the associated (broken) D-Bus tank service.
 
 Data is recovered from Signal K over HTTP and the Signal K server can
-be running on the local network or even on the Venus host.
+be running remotely over ethernet or locally on the Venus host.
 
 For many multi-tank installations the default Venus GUI doesn't quite
 make it - the size of individual tank panel elements limits the number
 of tanks that can be displayed.
 @kwindrem has impemented some GUI updates that address this problem
-in his
-[tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
-project and the following installation instructions assume that you
-will want to update your system in this way.
+in and the following installation instructions borrow his changes on
+the assumption that you will want to update your system in this way.
+If you prefer to try your luck with the stock Venus GUI, then just
+skip step (2) below, bearing in mind that you will lose the ability
+to hide broken multi-channel CAN/N2K 
 
 ### Installation
 
