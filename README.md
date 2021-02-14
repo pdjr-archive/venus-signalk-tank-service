@@ -43,11 +43,13 @@ Otherwise, read on...
 
 ## This project
 
-__venus-signalk-tank-service__ ignores Venus' broken tank handling,
-and instead recovers tank data from a Signal K server, generating
-and updating one D-Bus service per tank.
+__venus-signalk-tank-service__ recovers tank data from a specified
+Signal K server, generating and updating one D-Bus service per tank.
 
-For systems which have a CAN/N2K connection receiving data from a
+
+ disables the display of tank data derived
+from Venus' broken CAN/N2K tank devices and 
+Tank data deriving from systems which have a CAN/N2K connection receiving data from a
 multi-channel tank sensor device a facility is provided which hides
 display of the associated (broken) D-Bus tank service.
 
