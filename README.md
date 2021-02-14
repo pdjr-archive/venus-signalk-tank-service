@@ -103,10 +103,10 @@ of data for multiple tank installations than the stock Venus GUI.
    configured in a way that does not return tank capacity in the litre
    units required by Venus.
    
-4. Run ```tankservice.py``` and check that it outputs details of the tanks
+4. Run ```signalktank.py``` and check that it outputs details of the tanks
    it is configuring. My system has five tanks and I see:
    ```
-   $> ./signalktankservice.py 
+   $> ./signalktank.py 
    INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_192_168_1_2_3000_5_0
    INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_192_168_1_2_3000_1_1
    INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_192_168_1_2_3000_1_2
@@ -117,36 +117,34 @@ of data for multiple tank installations than the stock Venus GUI.
    is actually available in Signal K and make sure that the values
    you supplied for SIGNALK_SERVER and SIGNALK_TANKS are correct.
 
-5. With ```tankservice.py``` running you should see your configured tanks
+5. With ```signalktank.py``` running you should see your configured tanks
    displaying on the Venus GUI.
-   Note that if you have a faulty multi-channel tank sensor on your
-   CAN bus then it will also show up at this point, but it should
-   disappear at the next step!
+   If you have a CAN connected multi-channel tank sensor on your system then
+   it will still apear in the GUI at this point.
    Stop the program using 'ctrl-C'.
 
-6. Run ```setup``` to make ```tankservice.py``` execute automatically when
-   Venus boots and to tweak the GUI interface.
-   ```
-   $> ./setup install
-   ```
-   This script adds a line to ```/data/rc.local``` (creating the file if it
-   is absent), backs up the GUI files which that are to be replaced and installs
-   the project versions.
-   The change persists over OS updates.
+6. Run ```setup install``` to tweak the Venus GUI interface and make
+   ```signalktank.py``` execute automatically when Venus boots.
    
-   If you want to revert your system to the state it was in before running ```setup install```,
-   then you can run ```setup uninstall ; reboot```.
+   The install script adds a line to ```/data/rc.local``` (creating the file
+   if it is absent), backs up the GUI files which that are to be replaced and
+   installs the project versions of ```OverviewMobile.qml``` and
+   ```TileTank.qml```.
+   These changes persist over OS updates.
    
-9. Finally, reboot Venus.
+7. Finally, reboot Venus.
    ```
    $> reboot
    ```
 
+If you want to revert your system to the state it was in before running
+```setup install```, then you can run ```setup uninstall ; reboot```.
+
 ## Acknowledgements
 
 Thanks to @kwindrem for making this a whole lot easier than it might have
-been by designing his repeater software in a way which meant others could
-leverage it.
+been by reworking the Venus GUI mobile interface so nicely and in such a way
+that others can leverage it.
 
 Thanks to @mvader at Victron for being honest about the likelihood of a
 manufacturer fix and and so motivating me (after four years of complaining!)
