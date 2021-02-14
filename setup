@@ -1,12 +1,48 @@
 #!/bin/bash
 
-# Add our program to rc.local
-if [ -f /data/rc.local ] ; then
-    grep -v "signalktank.py" /data/rc.local > temp
-    mv -f temp /data/rc.local
-else
-    echo "#!/bin/bash" > /data/rc.local
+if [ "${1}" == "" ] ; then
+	echo "usage: setup install"
+	echo "usage: setup uninstall"
+	exit 0;
 fi
 
-echo "/data/venus-signalk-tank-service-main/signalktank.py &" >> /data/rc.local
-chmod 755 /data/rc.local
+VICTRON_GUI_DIR="/opt/victronenergy/gui/qml/"
+MY_GUI_DIR="./gui/"
+GUIFILES="OverviewMobile.qml TileTank.qml"
+RCLOCAL="/data/rc.local"
+
+if [ "${1}" == "install" ] ; then
+	for file in ${GUIFILES} ; do
+		if [ ! -f "${VICTRON_GUI_DIR}${file}.orig" ]; then
+			mv "${VICTRON_GUI_DIR}${file}" "${VICTRON_GUI_DIR}${file}.orig" 
+		fi
+		cp "${MY_GUI_DIR}${file}" "${VICTRON_GUI_DIR}${file}"
+	done
+
+	if [ -f "${RCLOCAL}" ] ; then
+		grep -v "signalktank.py" "${RCLOCAL}" > temp
+    		mv -f temp "${RCLOCAL}"
+	else
+		echo "#!/bin/bash" > "${RCLOCAL}"
+	fi
+	chmod 755 "${RCLOCAL}"
+	echo "/data/venus-signalk-tank-service-main/signalktank.py &" >> "${RCLOCAL}"
+	exit 0
+fi
+
+if [ "${1}" == "uninstall" ] ; then  
+	for file in ${GUIFILES} ; do
+		if [ -f "${VICTRON_GUI_DIR}${file}.orig" ]; then
+			mv "${VICTRON_GUI_DIR}${file}.orig" "${VICTRON_GUI_DIR}${file}" 
+		else
+			echo "${0}: cannot restore ${file} because there is no backup"
+		fi
+	done
+	if [ -f "${RCLOCAL}" ] ; then
+		grep -v "signalktank.py" "${RCLOCAL}" > temp
+    		mv -f temp "${RCLOCAL}"
+	fi
+	exit 0
+fi
+
+echo "${0}: invalid option (${1})"

@@ -48,12 +48,6 @@ SIGNALK_TANKS = [
 	{ 'path': 'tanks/fuel/4' }
 ]
 
-# The /ProductId of any multi-channel tank service which should be
-# hidden on the GUI and the persistent settings path to which this
-# should be written so that the GUI can find it.
-# 
-HIDE_PRODUCT_ID = 41312
-
 # The frequency in ms at which to update tank data.
 #
 UPDATE_INTERVAL = 10000
@@ -62,16 +56,13 @@ UPDATE_INTERVAL = 10000
 # END OF USER CONFIGURATION
 ########################################################################
 
-APPLICATION_SERVICE_NAME = 'signalktank'
+APPLICATION_SERVICE_NAME = 'signalk'
 VERSION='1.0.2'
 
 SIGNALK_SELF_PATH='/signalk/v1/api/vessels/self'
 SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'liveWell': 3, 'Oil': 4, 'wasteWater': 5 }
 SIGNALK_TANK_PATH_TO_SERVICE = {}
 SETTINGS_ROOT = '/Settings/Devices'
-
-HIDE_SETTINGS_PATH = '/Settings/Devices/TankRepeater/SeeLevelService'
-HIDE_SETTINGS_VALUE = HIDE_PRODUCT_ID
 
 class SystemBus(dbus.bus.BusConnection):
 	def __new__(cls):
@@ -100,7 +91,6 @@ class SignalkTank:
                 servicesettingspath = '%s/%s' % (SETTINGS_ROOT, self._servicename)
 		proposedclassdeviceinstance = '%s:%s' % ('tank', n2ktankinstance)
 		SETTINGS = {
-                        'ignore':     [HIDE_SETTINGS_PATH, HIDE_SETTINGS_VALUE, 0, 0], 
 			'instance':   [servicesettingspath + '/ClassAndVrmInstance', proposedclassdeviceinstance, 0, 0],
 			'customname': [servicesettingspath + '/CustomName', '', 0, 0]
 		}
