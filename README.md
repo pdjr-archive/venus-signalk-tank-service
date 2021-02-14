@@ -5,8 +5,8 @@ services, injecting tank data from Signal K into Venus OS and
 enabling its display on the Venus GUI.
 
 This is useful because it provides a work-around for Venus' broken
-native support for multi-channel CAN/N2K tank sensor devices like
-the Maretron FPM100 and the Garnet SeeLevel.
+native support for CAN connected multi-channel tank sensor devices
+like the Maretron FPM100 and the Garnet SeeLevel.
 
 Although designed to address Venus' problem with multi-channel tank
 sensors, the project will, of course, inject any Signal K tank data
@@ -36,23 +36,23 @@ data updates but this not allow disambiguation in installations which
 have more than one tank of a particular fluid type.
 
 If you have a multi-channel tank sensor on CAN and you have only one tank
-of each fluid type, then look at @kwindrem's
+of each fluid type, then look at Kevin Windrem's
 [tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
 project for a fix to this problem that does not involve Signal K.
 
 ## This project
 
 __venus-signalk-tank-service__ recovers tank data from a specified
-Signal K server, generating and updating one D-Bus service per tank.
+Signal K server generating and updating one D-Bus service per tank.
 
 Data is recovered from Signal K over HTTP.
-The Signal K server can, of course, be running remotely over ethernet or
-locally on the Venus host.
+The Signal K server can, of course, be running on a remote computer or
+on the local Venus host.
 
-The Venus GUI is tweaked to prevent display of tank data deriving from now
-redundant 'socketcan' services and some of @kwindrem's GUI enhancements
-are applied because they enable a more meaningful display of data for
-multiple tank installations than the stock Venus GUI.
+The Venus GUI is tweaked to prevent display of tank data deriving from
+the now redundant 'socketcan' services and some of @kwindrem's GUI
+enhancements are applied because they enable a more meaningful display
+of data for multiple tank installations than the stock Venus GUI.
 
 ### Installation
 
@@ -69,7 +69,7 @@ multiple tank installations than the stock Venus GUI.
    $> cd venus-signalk-tank-service-main
    ```
 
-3. Open ```tankservice.py``` in a text editor and change the
+3. Open ```signalktank.py``` in a text editor and change the
    values of SIGNALK_SERVER and SIGNALK_TANKS to suit your needs.
 
    SIGNALK_SERVER specifies the hostname/IP-address and port
