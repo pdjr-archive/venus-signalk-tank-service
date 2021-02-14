@@ -57,7 +57,7 @@ UPDATE_INTERVAL = 10000
 ########################################################################
 
 APPLICATION_SERVICE_NAME = 'signalk'
-VERSION='1.0.2'
+VERSION='1.2.1'
 
 SIGNALK_SELF_PATH='/signalk/v1/api/vessels/self'
 SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'liveWell': 3, 'Oil': 4, 'wasteWater': 5 }
