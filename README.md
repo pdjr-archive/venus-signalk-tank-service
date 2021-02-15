@@ -32,11 +32,11 @@ problematic and, for non-trivial tank installations, infeasible.
 
 Even so, there have been a number of attempts at implementing fixes
 and work-arounds based on the timing of fluid type and tank level
-data updates but this not allow disambiguation in installations which
-have more than one tank of a particular fluid type.
+data updates but this does not allow disambiguation in installations
+which have more than one tank of a particular fluid type.
 
-If you have a multi-channel tank sensor on CAN and you have only one tank
-of each fluid type, then look at Kevin Windrem's
+If you have a multi-channel tank sensor on CAN and you have only one
+tank of each fluid type, then look at Kevin Windrem's
 [tank repeater](https://github.com/kwindrem/SeeLevel-N2K-Victron-VenusOS)
 project for a fix to this problem that does not involve Signal K.
 
@@ -142,7 +142,7 @@ If you want to revert your system to the state it was in before running
 
 ## Acknowledgements
 
-Thanks to @kwindrem for making this a whole lot easier than it might have
+Thanks to Kevin Windrem for making this a whole lot easier than it might have
 been by reworking the Venus GUI mobile interface so nicely and in such a way
 that others can leverage it.
 
