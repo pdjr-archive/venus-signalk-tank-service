@@ -1,8 +1,8 @@
 # venus-signalk-tank-service
 
-__venus-signalk-tank-service__ represents Signal K tanks as D-Bus
-services, injecting tank data from Signal K into Venus OS and 
-enabling its display on the Venus GUI.
+__venus-signalk-tank-service__ represents Signal K tanks as Venus
+tank services enabling, amongst other things, its display on the
+Venus GUI.
 
 This is useful because it provides a work-around for Venus' broken
 native support for CAN connected multi-channel tank sensor devices
@@ -43,14 +43,14 @@ project for a fix to this problem that does not involve Signal K.
 ## This project
 
 __venus-signalk-tank-service__ recovers tank data from a specified
-Signal K server generating and updating one D-Bus service per tank.
+Signal K server generating and updating one Venus service per tank.
 
 Data is recovered from Signal K over HTTP.
 The Signal K server can, of course, be running on a remote computer or
 on the local Venus host.
 
-The Venus GUI is tweaked to prevent display of tank data deriving from
-the now redundant 'socketcan' services and some of @kwindrem's GUI
+The Venus GUI can be tweaked to prevent display of tank data deriving
+from the now redundant 'socketcan' services and some of @kwindrem's GUI
 enhancements are applied because they enable a more meaningful display
 of data for multiple tank installations than the stock Venus GUI.
 
@@ -123,14 +123,8 @@ of data for multiple tank installations than the stock Venus GUI.
    it will still apear in the GUI at this point.
    Stop the program using 'ctrl-C'.
 
-6. Run ```setup install``` to tweak the Venus GUI interface and make
-   ```signalktank.py``` execute automatically when Venus boots.
-   
-   The install script adds a line to ```/data/rc.local``` (creating the file
-   if it is absent), backs up the GUI files which that are to be replaced and
-   installs the project versions of ```OverviewMobile.qml``` and
-   ```TileTank.qml```.
-   These changes persist over OS updates.
+6. Run ```setup``` to tweak the Venus GUI interface and make ```signalktank.py```
+   execute automatically when Venus boots.
    
 7. Finally, reboot Venus.
    ```
