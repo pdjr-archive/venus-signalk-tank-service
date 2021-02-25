@@ -1,0 +1,1 @@
+s/\(service\.type === DBusService\.DBUS_SERVICE_TANK\)/((service.type === DBusService.DBUS_SERVICE_TANK) \&\& (name.indexOf("socketcan") == -1))/
