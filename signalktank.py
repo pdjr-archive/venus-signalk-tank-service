@@ -41,7 +41,7 @@ SIGNALK_SERVER = '192.168.1.2:3000'
 # tanks on SIGNALK_SERVER.
 #
 SIGNALK_TANKS = [
-	{ 'path': 'tanks/wasteWater/0', 'factor': 1000.0 },
+	{ 'path': 'tanks/wasteWater/0' },
 	{ 'path': 'tanks/freshWater/1' },
 	{ 'path': 'tanks/freshWater/2' },
 	{ 'path': 'tanks/fuel/3' },
@@ -174,14 +174,13 @@ def main():
 		for tank in SIGNALK_TANKS:
 			if ('path' in tank):
 				[ dummy, fluidtype, instance ] = tank['path'].split('/')
-				factor = tank['factor'] if ('factor' in tank) else 1.0
 				http = httplib.HTTPConnection(SIGNALK_SERVER)
 				http.request('GET', SIGNALK_SELF_PATH + '/' + tank['path'])
 				res = http.getresponse()
 				if res.status == 200:
 					jsondata = json.loads(res.read())
 					fluidType = SIGNALK_TO_N2K_FLUID_TYPES[fluidtype]
-					capacity = (jsondata['capacity']['value'] * factor)
+					capacity = jsondata['capacity']['value']
 					service = SignalkTank(
 						n2kfluidtype=fluidType,
                                         	n2ktankinstance=int(instance),
