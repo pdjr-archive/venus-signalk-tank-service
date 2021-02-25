@@ -57,7 +57,7 @@ UPDATE_INTERVAL = 10000
 ########################################################################
 
 APPLICATION_SERVICE_NAME = 'signalk'
-VERSION='1.2.0'
+VERSION='1.3.0'
 
 SIGNALK_SELF_PATH='/signalk/v1/api/vessels/self'
 SIGNALK_TO_N2K_FLUID_TYPES = { 'fuel': 0, 'freshWater': 1, 'greyWater': 2, 'liveWell': 3, 'Oil': 4, 'wasteWater': 5 }
@@ -103,7 +103,7 @@ class SignalkTank:
 
 		self._dbusservice.add_path('/DeviceInstance', self._settings['instance'].split(':')[1])
 		self._dbusservice.add_path('/ProductId', 0)
-		self._dbusservice.add_path('/ProductName', 'SignalK tank interface')
+		self._dbusservice.add_path('/ProductName', '')
 		self._dbusservice.add_path('/FirmwareVersion', 0)
 		self._dbusservice.add_path('/HardwareVersion', 0)
 		self._dbusservice.add_path('/Connected', 1)
