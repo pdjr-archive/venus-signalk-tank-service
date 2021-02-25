@@ -95,6 +95,10 @@ GUI.
    designed to tweak the Venus GUI interface and make ```signalktank.py```
    execute automatically when Venus boots.
    All the actions taken by setup are reversible.
+   ```
+   $> ./setup
+   ...
+   ```
    
 7. Finally, reboot Venus.
    ```
