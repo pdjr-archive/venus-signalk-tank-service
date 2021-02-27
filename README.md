@@ -1,7 +1,7 @@
 # venus-signalk-tank-service
 
 __venus-signalk-tank-service__ represents Signal K tanks as Venus
-tank services enabling, amongst other things, their display on the
+tank services, enabling, amongst other things, their display on the
 Venus GUI.
 
 This is useful because it provides a work-around for Venus' broken
@@ -17,16 +17,22 @@ into Venus and so make it available to devices like the CCGX.
 ## Overview
 
 __venus-signalk-tank-service__ recovers tank data from a specified
-Signal K server and generates one Venus service per tank.
-Data is recovered from Signal K over HTTP.
-The Signal K server can, of course, be running on a remote computer or
-on the local Venus host.
+Signal K server over HTTP and generates one Venus service for each
+reported tank.
+The Signal K server can, of course, be running on a remote computer
+or on the local Venus host.
 
 The Venus GUI can be tweaked to prevent display of tank data deriving
-from the now redundant 'socketcan' services and some of Kevin Windrem's
-GUI enhancements are applied because they enable a more meaningful
-display of data for multiple tank installations than the stock Venus
-GUI.
+from the now redundant 'socketcan' services.
+
+Some GUI enhancements derived from the work of Kevin Windrem can be
+applied to enable a more functional display of tank data than is
+possible with the stock Venus GUI.
+These enhancements are available for Venus devices which retain default
+Victron installation hostnames of 'ccgx' and 'einstein': if your device
+has a different hostname then you will need to provide a soft link in
+the project 'gui' directory which maps your hostname to either 'ccgx'
+or 'einstein'. 
 
 ### Installation
 
@@ -70,8 +76,8 @@ GUI.
    Use the *path* string property to specify the self-relative Signal K
    path of each tank for which you wish to create a Venus service.
    
-4. Run ```signalktank.py``` and check that it outputs details of the tanks
-   it is configuring.
+4. Run ```signalktank.py``` and check that it outputs details of the
+   tanks it is configuring.
    My system has five tanks and I see:
    ```
    $> ./signalktank.py 
@@ -82,20 +88,16 @@ GUI.
    INFO:root:registered ourselves on D-Bus as com.victronenergy.tank.signalk_192_168_1_2_3000_0_4
    ```
    If the output isn't what you expect, then check that the tank data
-   is actually available in Signal K and make sure that the values
-   you supplied for SIGNALK_SERVER and SIGNALK_TANKS are correct.
+   is actually available in Signal K and make sure that the values you
+   supplied for SIGNALK_SERVER and SIGNALK_TANKS are correct.
 
-5. With ```signalktank.py``` running you should see your configured tanks
-   displaying on the Venus GUI.
-   If you have a CAN connected multi-channel tank sensor on your system then
-   it will still apear in the GUI at this point.
-   Stop the program using 'ctrl-C'.
-
-6. Run ```setup``` to review and confirm some trivial system modifications
-   designed to tweak the Venus GUI interface and make ```signalktank.py```
-   execute automatically when Venus boots.
+6. Terminate ```signalktank.py``` and run ```setup``` to review and
+   confirm some trivial system modifications designed to tweak the
+   Venus GUI interface and make ```signalktank.py``` execute
+   automatically when Venus boots.
    All the actions taken by setup are reversible.
    ```
+   ^C
    $> ./setup
    ...
    ```
@@ -107,13 +109,14 @@ GUI.
 
 ## Acknowledgements
 
-Thanks to Kevin Windrem for making this a whole lot easier than it might have
-been by reworking the Venus GUI mobile interface so nicely and in such a way
-that others can leverage it.
+Thanks to Kevin Windrem for making this a whole lot easier than it
+might have been by reworking the Venus GUI mobile interface so
+nicely and in such a way that others can leverage it.
 
 Thanks to @mvader at Victron for being honest about the likelihood of a
-manufacturer fix and and so motivating me (after four years of complaining!)
-to take a different approach to getting tank data on my CCGX.
+manufacturer fix for Venus' problem with multi-channel tank sensors and
+so motivating me (after four years of complaining!) to take a different
+approach to getting tank data on my CCGX.
 
 ## Author
 
