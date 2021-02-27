@@ -2,10 +2,11 @@
 
 RCLOCAL="/data/rc.local"
 SIGNALKTANK="`pwd`/signalktank.py"
+MY_GUI_DIR="./gui/${HOSTNAME}/"
 VENUS_OVERVIEW_QML="/opt/victronenergy/gui/qml/OverviewMobile.qml"
-MY_OVERVIEW_QML="./gui/OverviewMobile.qml"
+MY_OVERVIEW_QML="${MY_GUI_DIR}OverviewMobile.qml"
 VENUS_TANK_QML="/opt/victronenergy/gui/qml/TileTank.qml"
-MY_TANK_QML="./gui/TileTank.qml"
+MY_TANK_QML="${MY_GUI_DIR}TileTank.qml"
 SED_SCRIPT="./sed.txt"
 
 clear
@@ -49,55 +50,60 @@ while [ "${response}" != "y" ] && [ "${response}" != "n" ] ; do
     esac
 done
 
-response=""
-while [ "${response}" != "o" ] && [ "${response}" != "t" ] && [ "${response}" != "n" ] ; do
-    if [ "${response}" == "help" ] ; then
-        echo  ""
-        echo "This option allows the installation of some enhancements to"
-        echo "the Venus mobile overview GUI page".
-	echo "Option 't' leaves the Venus mobile overview page untouched,"
-        echo "but replaces the default tank display element (TileTank.qml)"
-	echo "with a version that allows the page to display more than four"
-        echo "tanks".
-        echo "Option 'o' replaces the Venus mobile overview page (OverviewMobile.qml)"
-	echo "and the tank display element (TileTank.qml) with versions"
-        echo "that present the display shown in README.md."
-        echo "Answering 'n' will remove any installed enhancements reverting"
-	echo "the Venus GUI to its default state."
-    fi
-    echo ""
-    echo -n "Install enhanced GUI components (o/t/n)? "
-    read -e response rubbish
-    case ${response} in
-        o)  if [ ! -f "${VENUS_OVERVIEW_QML}.orig" ] ; then
-	        cp "${VENUS_OVERVIEW_QML}" "${VENUS_OVERWIEW_QML}.orig"
-            fi
-            cp "${MY_OVERVIEW_QML}" "${VENUS_OVERVIEW_QML}"
-            if [ ! -f "${VENUS_TANK_QML}.orig" ] ; then
-	        cp "${VENUS_TANK_QML}" "${VENUS_TANK_QML}.orig"
-            fi
-            cp "${MY_TANK_QML}" "${VENUS_TANK_QML}"
-	    ;;
-        t)  if [ ! -f "${VENUS_TANK_QML}.orig" ] ; then
-	        cp "${VENUS_TANK_QML}" "${VENUS_TANK_QML}.orig"
-            fi
-            cp "${MY_TANK_QML}" "${VENUS_TANK_QML}"
-            ;;
-        n)  if [ -f "${VENUS_OVERVIEW_QML}.orig" ] ; then
-		cp "${VENUS_OVERVIEW_QML}.orig" "${VENUS_OVERVIEW_QML}"
-	    fi
-            if [ -f "${VENUS_TANK_QML}.orig" ] ; then
-		cp "${VENUS_TANK_QML}.orig" "${VENUS_TANK_QML}"
-	    fi
-	    ;;
-        help)
-            ;;
-        *)  echo "invalid response - must be 'o', 't' or 'help'"
-	    ;;
-    esac
-done
-svc -d /service/gui
-svc -u /service/gui
+if [ -f "${MY_GUI_DIR}" ] ; then
+	response=""
+	while [ "${response}" != "o" ] && [ "${response}" != "t" ] && [ "${response}" != "n" ] ; do
+    		if [ "${response}" == "help" ] ; then
+        		echo  ""
+        		echo "This option allows the installation of some enhancements to"
+        		echo "the Venus mobile overview GUI page".
+			echo "Option 't' leaves the Venus mobile overview page untouched,"
+        		echo "but replaces the default tank display element (TileTank.qml)"
+			echo "with a version that allows the page to display more than four"
+        		echo "tanks".
+        		echo "Option 'o' replaces the Venus mobile overview page (OverviewMobile.qml)"
+			echo "and the tank display element (TileTank.qml) with versions"
+        		echo "that present the display shown in README.md."
+        		echo "Answering 'n' will remove any installed enhancements reverting"
+			echo "the Venus GUI to its default state."
+    		fi
+    		echo ""
+    		echo -n "Install enhanced GUI components (o/t/n)? "
+    		read -e response rubbish
+    		case ${response} in
+        		o)  	if [ ! -f "${VENUS_OVERVIEW_QML}.orig" ] ; then
+	        			cp "${VENUS_OVERVIEW_QML}" "${VENUS_OVERWIEW_QML}.orig"
+            			fi
+            			cp "${MY_OVERVIEW_QML}" "${VENUS_OVERVIEW_QML}"
+            			if [ ! -f "${VENUS_TANK_QML}.orig" ] ; then
+	        			cp "${VENUS_TANK_QML}" "${VENUS_TANK_QML}.orig"
+            			fi
+            			cp "${MY_TANK_QML}" "${VENUS_TANK_QML}"
+	    			;;
+        		t)  	if [ ! -f "${VENUS_TANK_QML}.orig" ] ; then
+	        			cp "${VENUS_TANK_QML}" "${VENUS_TANK_QML}.orig"
+            			fi
+            			cp "${MY_TANK_QML}" "${VENUS_TANK_QML}"
+            			;;
+        		n)  	if [ -f "${VENUS_OVERVIEW_QML}.orig" ] ; then
+					cp "${VENUS_OVERVIEW_QML}.orig" "${VENUS_OVERVIEW_QML}"
+	    			fi
+            			if [ -f "${VENUS_TANK_QML}.orig" ] ; then
+					cp "${VENUS_TANK_QML}.orig" "${VENUS_TANK_QML}"
+	    			fi
+	    			;;
+        		help)
+            			;;
+        		*)  	echo "invalid response - must be 'o', 't' or 'help'"
+	    			;;
+    		esac
+	done
+	svc -d /service/gui
+	svc -u /service/gui
+else
+	echo "Skipping GUI configuration because support is only available for"
+	echo "devices with 'ccgx' and 'einstein' hostnames." 
+fi
 
 
 response=""
