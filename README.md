@@ -107,6 +107,15 @@ or 'einstein'.
    $> reboot
    ```
 
+8. If you run Scott Bender's 'venus' plugin on your Signal K server,
+   then the plugin will detect the new Venus tank services and attempt
+   to present them as additional tank entries in the Signal K tree.
+   
+   This circular replication of data is undesirable and in Signal K you
+   should use the 'venus' plugin configuration page to specify that the
+   plugin ignore any tank paths deriving from the tank services created
+   by __venus-signalk-tank-service__.
+
 ## Acknowledgements
 
 Thanks to Kevin Windrem for making this a whole lot easier than it
