@@ -35,17 +35,14 @@ from settingsdevice import SettingsDevice
 
 # The Signal K server to poll for tank data.
 #
-SIGNALK_SERVER = '192.168.1.2:3000'
+SIGNALK_SERVER = '192.168.16.201:3000'
 
 # The tanks to be processed (specify an empty array to process all
 # tanks on SIGNALK_SERVER.
 #
 SIGNALK_TANKS = [
-    { 'path': 'tanks/wasteWater/0' },
-    { 'path': 'tanks/freshWater/1' },
-    { 'path': 'tanks/freshWater/2' },
-    { 'path': 'tanks/fuel/3' },
-    { 'path': 'tanks/fuel/4' }
+    {'path':'tanks/freshWater/0'},
+    {'path':'tanks/freshWater/3'}
 ]
 
 # The frequency in ms at which to update tank data.
@@ -108,7 +105,7 @@ class SignalkTank:
         self._dbusservice.add_path('/HardwareVersion', 0)
         self._dbusservice.add_path('/Connected', 1)
  
-        for path, settings in self._paths.iteritems():
+        for path, settings in self._paths.items():
             self._dbusservice.add_path(path, settings['initial'], writeable=True, onchangecallback=self._handlechangedvalue)
 
     def _handlesettingschanged(self, name, old, new):
@@ -183,7 +180,7 @@ def main():
                     capacity = jsondata['capacity']['value']
                     service = SignalkTank(
                         n2kfluidtype=fluidType,
-                                            n2ktankinstance=int(instance),
+                        n2ktankinstance=int(instance),
                         paths={
                             '/Level': { 'initial': 0 },
                             '/FluidType': { 'initial': fluidType },
