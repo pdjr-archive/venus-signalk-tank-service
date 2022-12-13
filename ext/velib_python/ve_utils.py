@@ -1,25 +1,30 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import sys
 from traceback import print_exc
 from os import _exit as os_exit
 from os import statvfs
+from subprocess import check_output, CalledProcessError
 import logging
 import dbus
 logger = logging.getLogger(__name__)
 
 VEDBUS_INVALID = dbus.Array([], signature=dbus.Signature('i'), variant_level=1)
 
+class NoVrmPortalIdError(Exception):
+	pass
+
 # Use this function to make sure the code quits on an unexpected exception. Make sure to use it
-# when using gobject.idle_add and also gobject.timeout_add.
-# Without this, the code will just keep running, since gobject does not stop the mainloop on an
+# when using GLib.idle_add and also GLib.timeout_add.
+# Without this, the code will just keep running, since GLib does not stop the mainloop on an
 # exception.
-# Example: gobject.idle_add(exit_on_error, myfunc, arg1, arg2)
+# Example: GLib.idle_add(exit_on_error, myfunc, arg1, arg2)
 def exit_on_error(func, *args, **kwargs):
 	try:
 		return func(*args, **kwargs)
 	except:
 		try:
-			print 'exit_on_error: there was an exception. Printing stacktrace will be tryed and then exit'
+			print ('exit_on_error: there was an exception. Printing stacktrace will be tried and then exit')
 			print_exc()
 		except:
 			pass
@@ -31,23 +36,54 @@ def exit_on_error(func, *args, **kwargs):
 
 __vrm_portal_id = None
 def get_vrm_portal_id():
-	# For the CCGX, the definition of the VRM Portal ID is that it is the mac address of the onboard-
-	# ethernet port (eth0), stripped from its colons (:) and lower case.
-
-	# nice coincidence is that this also works fine when running on your (linux) development computer.
+	# The original definition of the VRM Portal ID is that it is the mac
+	# address of the onboard- ethernet port (eth0), stripped from its colons
+	# (:) and lower case. This may however differ between platforms. On Venus
+	# the task is therefore deferred to /sbin/get-unique-id so that a
+	# platform specific method can be easily defined.
+	#
+	# If /sbin/get-unique-id does not exist, then use the ethernet address
+	# of eth0. This also handles the case where velib_python is used as a
+	# package install on a Raspberry Pi.
+	#
+	# On a Linux host where the network interface may not be eth0, you can set
+	# the VRM_IFACE environment variable to the correct name.
 
 	global __vrm_portal_id
 
 	if __vrm_portal_id:
 		return __vrm_portal_id
 
-	# Assume we are on linux
-	import fcntl, socket, struct
+	portal_id = None
 
+	# First try the method that works if we don't have a data partition. This
+	# will fail when the current user is not root.
+	try:
+		portal_id = check_output("/sbin/get-unique-id").decode("utf-8", "ignore").strip()
+		if not portal_id:
+			raise NoVrmPortalIdError("get-unique-id returned blank")
+		__vrm_portal_id = portal_id
+		return portal_id
+	except CalledProcessError:
+		# get-unique-id returned non-zero
+		raise NoVrmPortalIdError("get-unique-id returned non-zero")
+	except OSError:
+		# File doesn't exist, use fallback
+		pass
+
+	# Fall back to getting our id using a syscall. Assume we are on linux.
+	# Allow the user to override what interface is used using an environment
+	# variable.
+	import fcntl, socket, struct, os
+
+	iface = os.environ.get('VRM_IFACE', 'eth0').encode('ascii')
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', 'eth0'[:15]))
-	__vrm_portal_id = ''.join(['%02x' % ord(char) for char in info[18:24]])
+	try:
+		info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', iface[:15]))
+	except IOError:
+		raise NoVrmPortalIdError("ioctl failed for eth0")
 
+	__vrm_portal_id = info[18:24].hex()
 	return __vrm_portal_id
 
 
@@ -91,26 +127,65 @@ def get_free_space(path):
 	try:
 		s = statvfs(path)
 		result = s.f_frsize * s.f_bavail     # Number of free bytes that ordinary users
-	except Exception, ex:
+	except Exception as ex:
 		logger.info("Error while retrieving free space for path %s: %s" % (path, ex))
 
 	return result
 
 
-def get_load_averages():
-	c = read_file('/proc/loadavg')
-	return c.split(' ')[:3]
+def _get_sysfs_machine_name():
+	try:
+		with open('/sys/firmware/devicetree/base/model', 'r') as f:
+			return f.read().rstrip('\x00')
+	except IOError:
+		pass
 
+	return None
 
-# Returns False if it cannot find a machine name. Otherwise returns the string
+# Returns None if it cannot find a machine name. Otherwise returns the string
 # containing the name
 def get_machine_name():
-	c = read_file('/proc/device-tree/model')
+	# First try calling the venus utility script
+	try:
+		return check_output("/usr/bin/product-name").strip().decode('UTF-8')
+	except (CalledProcessError, OSError):
+		pass
 
-	if c != False:
-		return c.strip('\x00')
+	# Fall back to sysfs
+	name = _get_sysfs_machine_name()
+	if name is not None:
+		return name
 
-	return read_file('/etc/venus/machine')
+	# Fall back to venus build machine name
+	try:
+		with open('/etc/venus/machine', 'r', encoding='UTF-8') as f:
+			return f.read().strip()
+	except IOError:
+		pass
+
+	return None
+
+
+def get_product_id():
+	""" Find the machine ID and return it. """
+
+	# First try calling the venus utility script
+	try:
+		return check_output("/usr/bin/product-id").strip().decode('UTF-8')
+	except (CalledProcessError, OSError):
+		pass
+
+	# Fall back machine name mechanism
+	name = _get_sysfs_machine_name()
+	return {
+		'Color Control GX': 'C001',
+		'Venus GX': 'C002',
+		'Octo GX': 'C006',
+		'EasySolar-II': 'C007',
+		'MultiPlus-II': 'C008',
+		'Maxi GX': 'C009',
+		'Cerbo GX': 'C00A'
+	}.get(name, 'C003') # C003 is Generic
 
 
 # Returns False if it cannot open the file. Otherwise returns its rstripped contents
@@ -120,7 +195,7 @@ def read_file(path):
 	try:
 		with open(path, 'r') as f:
 			content = f.read().rstrip()
-	except Exception, ex:
+	except Exception as ex:
 		logger.debug("Error while reading %s: %s" % (path, ex))
 
 	return content
@@ -134,10 +209,11 @@ def wrap_dbus_value(value):
 	if isinstance(value, bool):
 		return dbus.Boolean(value, variant_level=1)
 	if isinstance(value, int):
-		return dbus.Int32(value, variant_level=1)
+		try:
+			return dbus.Int32(value, variant_level=1)
+		except OverflowError:
+			return dbus.Int64(value, variant_level=1)
 	if isinstance(value, str):
-		return dbus.String(value, variant_level=1)
-	if isinstance(value, unicode):
 		return dbus.String(value, variant_level=1)
 	if isinstance(value, list):
 		if len(value) == 0:
@@ -146,8 +222,6 @@ def wrap_dbus_value(value):
 			# an invalid value.
 			return dbus.Array([], signature=dbus.Signature('u'), variant_level=1)
 		return dbus.Array([wrap_dbus_value(x) for x in value], variant_level=1)
-	if isinstance(value, long):
-		return dbus.Int64(value, variant_level=1)
 	if isinstance(value, dict):
 		# Wrapping the keys of the dictionary causes D-Bus errors like:
 		# 'arguments to dbus_message_iter_open_container() were incorrect,
@@ -172,12 +246,12 @@ def unwrap_dbus_value(val):
 		v = [unwrap_dbus_value(x) for x in val]
 		return None if len(v) == 0 else v
 	if isinstance(val, (dbus.Signature, dbus.String)):
-		return unicode(val)
+		return str(val)
 	# Python has no byte type, so we convert to an integer.
 	if isinstance(val, dbus.Byte):
 		return int(val)
 	if isinstance(val, dbus.ByteArray):
-		return "".join([str(x) for x in val])
+		return "".join([bytes(x) for x in val])
 	if isinstance(val, (list, tuple)):
 		return [unwrap_dbus_value(x) for x in val]
 	if isinstance(val, (dbus.Dictionary, dict)):
@@ -186,3 +260,17 @@ def unwrap_dbus_value(val):
 	if isinstance(val, dbus.Boolean):
 		return bool(val)
 	return val
+
+# When supported, only name owner changes for the the given namespace are reported. This
+# prevents spending cpu time at irrelevant changes, like scripts accessing the bus temporarily.
+def add_name_owner_changed_receiver(dbus, name_owner_changed, namespace="com.victronenergy"):
+	# support for arg0namespace is submitted upstream, but not included at the time of
+	# writing, Venus OS does support it, so try if it works.
+	if namespace is None:
+		dbus.add_signal_receiver(name_owner_changed, signal_name='NameOwnerChanged')
+	else:
+		try:
+			dbus.add_signal_receiver(name_owner_changed,
+				signal_name='NameOwnerChanged', arg0namespace=namespace)
+		except TypeError:
+			dbus.add_signal_receiver(name_owner_changed, signal_name='NameOwnerChanged')
