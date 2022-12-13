@@ -35,14 +35,17 @@ from settingsdevice import SettingsDevice
 
 # The Signal K server to poll for tank data.
 #
-SIGNALK_SERVER = '192.168.16.201:3000'
+SIGNALK_SERVER = '127.0.0.1:3000'
 
 # The tanks to be processed (specify an empty array to process all
 # tanks on SIGNALK_SERVER.
 #
 SIGNALK_TANKS = [
-    {'path':'tanks/freshWater/0'},
-    {'path':'tanks/freshWater/3'}
+    { 'path': 'tanks/wasteWater/0' },
+    { 'path': 'tanks/freshWater/1' },
+    { 'path': 'tanks/freshWater/2' },
+    { 'path': 'tanks/fuel/3' },
+    { 'path': 'tanks/fuel/4' }
 ]
 
 # The frequency in ms at which to update tank data.
